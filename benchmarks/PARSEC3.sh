@@ -18,6 +18,25 @@ BENCHMARKS_BASE_DIR=$(find -O3 $HOME -type d -name wholeprogram_benchmarks)
 
 echo "Completed run, Gathering results now..."
 cd $BENCHMARKS_BASE_DIR/build/PARSEC3
-OUTPUT_DIR=$THIS_PATH/../Outputs/output_$(date +"%Y-%m-%d")
-./scripts/collect_output.sh $OUTPUT_DIR
+DATA_OUTPUT_DIR=$THIS_PATH/../Outputs/output_$(date +"%Y-%m-%d")
+SPEEDUP_OUTPUT_DIR=$THIS_PATH/../Outputs/results/$(date +"%Y-%m-%d")
 
+mkdir -p $SPEEDUP_OUTPUT_DIR
+./scripts/collect_output.sh $DATA_OUTPUT_DIR && echo "All out data in folder $DATA_OUTPUT_DIR"
+
+for F in $(ls $DATA_OUTPUT_DIR/data)
+do
+  BENCHMARK=${F#times_}
+  BENCHMARK=${BENCHMARK%.*}
+  AVERAGE_PARALLEL=$(awk '{ total += $1; count++ } END { print total/count }' $F)
+  AVERAGE_SERIAL=0 #TODO: GET SERIAL VALUES
+
+  echo "$BENCHMARK,$AVERAGE_SERIAL,$AVERAGE_PARALLEL" >> $SPEEDUP_OUTPUT_DIR/tmp_status.csv
+done
+
+# Populate status json.
+$THIS_PATH/../constructJson/populateStatusJsons.sh $SPEEDUP_OUTPUT_DIR/tmp_status.csv > $SPEEDUP_OUTPUT_DIR/status.json
+
+[ ! -f $SPEEDUP_OUTPUT_DIR/../prior_results.json ] && cp $SPEEDUP_OUTPUT_DIR/status.json $SPEEDUP_OUTPUT_DIR/../prior_results.json
+
+rm -f $SPEEDUP_OUTPUT_DIR/tmp_status.csv
