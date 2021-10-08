@@ -45,7 +45,7 @@ do
 
   echo "Running for $X"
   cd build/$X
-#  make
+  make
   $THIS_PATH/benchmarks/$X.sh
 
   popd > /dev/null
