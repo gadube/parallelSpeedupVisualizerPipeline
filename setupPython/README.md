@@ -1,6 +1,6 @@
 # Python Virtual Environment
 
-Installs a local version of Python (Currently v3.7.12) to ~/.local/Python-VERSION and creates a virtual environment for use with the the [AutoParVisualizer](https://github.com/vgene/AutoParVisualizer.git).
+Installs a local version of Python (Currently v3.7.12) to ~/.local/Python-VERSION and creates a virtual environment for use with [AutoParVisualizer](https://github.com/vgene/AutoParVisualizer.git).
 
 Usage:
 
